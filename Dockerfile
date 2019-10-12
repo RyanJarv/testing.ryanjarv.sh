@@ -1,13 +1,17 @@
 #
 # Dockerfile generated from https://github.com/cloudposse/reference-architectures
 #
+FROM ryanjarv/terraform-root-modules:latest as terraform-root-modules
 
 FROM cloudposse/geodesic:0.115.0
 
 # Terraform version changes should be carefully managed, but Geodesic updates them frequently,
 # so Terraform version should be pinned here and updated thoughfully.
 # Install terraform 0.11 for backwards compatibility
-RUN apk add terraform_0.11@cloudposse terraform@cloudposse==0.11.14-r0
+RUN apk add terraform_0.11@cloudposse
+
+# Install terraform 0.12
+RUN apk add terraform_0.12@cloudposse terraform@cloudposse==0.12.3-r0
 
 # helm and helmfile version changes should be carefully managed, but Geodesic updates them frequently,
 # so the versions should be pinned here and updated thoughfully.
