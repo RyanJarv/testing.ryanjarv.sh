@@ -1,6 +1,8 @@
 #
 # Dockerfile generated from https://github.com/cloudposse/reference-architectures
 #
+FROM cloudposse/helmfiles:latest as helmfiles
+
 FROM ryanjarv/terraform-root-modules:latest as terraform-root-modules
 
 FROM cloudposse/geodesic:0.115.0
@@ -18,6 +20,8 @@ RUN apk add terraform_0.12@cloudposse terraform@cloudposse==0.12.3-r0
 # Pin helm to 2.14.1 and helmfile to 0.73.1 for stability
 RUN apk add helm@cloudposse==2.14.1-r0 helmfile@cloudposse==0.73.1-r0
 
+# Use kops 1.13
+RUN apk add kops@cloudposse kops@cloudposse==1.13.0-r0
 
 ENV DOCKER_IMAGE="ryanjarv/testing.ryanjarv.sh"
 ENV DOCKER_TAG="latest"
@@ -57,6 +61,8 @@ ENV AWS_MFA_PROFILE="${NAMESPACE}-root-admin"
 
 # Place configuration in 'conf/' directory
 COPY conf/ /conf/
+
+COPY --from=helmfiles /helmfiles /conf/helmfiles/
 
 # Filesystem entry for tfstate
 RUN s3 fstab '${TF_BUCKET}' '/' '/secrets/tf'
